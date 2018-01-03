@@ -72,7 +72,7 @@ def get_activity_timings(filter_off=True):
 
     ordered_timestamps = get_ordered_activity_timestamps()
     for x in range(len(ordered_timestamps) - 1, 1, -1):
-        end_ts, end_activity  = ordered_timestamps[x]
+        end_ts, end_activity = ordered_timestamps[x]
         start_ts, start_activity = ordered_timestamps[x - 1]
         if filter_off and start_activity == 'Off':  # Skip the off activity
             continue
@@ -81,7 +81,7 @@ def get_activity_timings(filter_off=True):
         time_diff = end_time - start_time
         time_delta = time_diff.days * 24 * 3600 + time_diff.seconds
         if time_delta > 15 * 3600:  # more then 15 hours
-            warning_msg = 'Warning: Probably issue with activity {0} entry starting {1}, ending{2}'.format(start_activity, start_ts, end_ts)
+            warning_msg = 'Warning: Probably an issue with activity {0} entry starting {1}, ending {2}'.format(start_activity, start_ts, end_ts)
             hrs = int(time_delta/3600.0)
             mins = int((time_delta - (hrs * 3600.0))/60.0)
             print('{0}: {1} hrs, {2} mins'.format(warning_msg, hrs, mins))
@@ -375,12 +375,34 @@ def plot_day_activity_percentages():
     # Initialize our plot data structure
     daily_stats = daily_statistics()
     plot_data = {}
-    for activity in activity_list:
-        for day in NUM_TO_DAY_MAP:
-            percentage = 100.0 * daily_stats[day][activity]['total_time']/daily_stats[day]['total_time']
-            plot_data[day] = {activity: percentage}
+    for day in NUM_TO_DAY_MAP:
+        plot_data[day] = {}
+        for activity in activity_list:
+            percentage = 0.0
+            if daily_stats[day].get(activity):
+                percentage = 100.0 * daily_stats[day][activity]['total_time']/daily_stats[day]['total_time']
+            plot_data[day][activity] = percentage
 
-    # Loop over each day computing the percentages of the activities we care about
+    # Order based on day
+    day_labels = sorted(plot_data.keys())
+    day_axis = arange(0, len(day_labels), 1)
+    xticks(day_axis, NUM_TO_DAY_MAP.values(), rotation='vertical')
+
+    xlabel('Day')
+    ylabel('Time Percentage')
+    title('Daily Percentage Of Time Spent On Activity')
+
+    # Plot each activity
+    for activity in activity_list:
+        y_data = []
+        for day in day_labels:
+            y_data.append(plot_data[day][activity])
+        plot(day_axis, y_data, label=activity)
+
+    grid(True)
+    rcParams['figure.figsize'] = 20, 10  # Make width=20 inches, height= 10 inches
+    legend()
+    show()
 
 
 def get_activity_statistics():
