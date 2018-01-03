@@ -25,7 +25,7 @@ PERCENTAGE_CUTOFF = 5
 def get_activities_in_localtime(log_dir='/Users/amacleod/.tt/logs'):
     """Parse the activity logs which are in UTC and convert to local time
 
-    :param str log_dir:   Directory in which the time stamped log files are stored. 
+    :param str log_dir:   Directory in which the time stamped log files are stored.
 
     :returns: A dictionary of local time stamps and activity engaged in at that time.
     :rtype:  dict
@@ -96,9 +96,9 @@ def get_wow_changes(weeks_ago=1):
     week percentages for the last complete week is computed by default
     (ie. weeks_ago=1). Specifying the number of weeks ago will compute
     as a change over the average of that many weeks. This is done in a
-    rolling manner.  
+    rolling manner.
 
-    If an activity was not engaged in during the previous week, the 
+    If an activity was not engaged in during the previous week, the
     precentage is a 0.0% increase by default.
 
     :param int weeks_ago:  The number of weeks used to compute the average wow change.
@@ -162,12 +162,12 @@ def get_wow_changes(weeks_ago=1):
                         wow_time = 100.0 * (cur - prev) / prev
                 wow_change[week][activity] = {'wow_count': wow_count,
                                               'wow_time': wow_time}
-                                    
+
     return wow_change
 
 
 def get_weekly_info():
-    """ Return a dictionary of weekly totals, counts and time in seonds, for each activity engaged during the week. 
+    """ Return a dictionary of weekly totals, counts and time in seonds, for each activity engaged during the week.
 
     Weeks are based on the week of the year (01 - 52) calendar.
     """
@@ -188,7 +188,7 @@ def get_weekly_info():
             weekly_info[weekly_key][activity]['count'] += 1
             weekly_info[weekly_key][activity]['time'] += time_delta
     return weekly_info
-        
+
 
 def print_wow_change(weeks_ago=1):
     wow_changes_info = get_wow_changes(weeks_ago)
@@ -221,12 +221,12 @@ def print_weekly_summary_timings():
             total_count += weekly_info[week][activity]['count']
         total_hours = int(total_time / 3600)
         total_mins = int(total_time % 60)
-        print('Week: {0}\tActivity Counts: {1:>3d}\tWorked: {2:>3d} hrs, {3:>2d} mins'.format(week, total_count, total_hours, total_mins)) 
+        print('Week: {0}\tActivity Counts: {1:>3d}\tWorked: {2:>3d} hrs, {3:>2d} mins'.format(week, total_count, total_hours, total_mins))
 
 
 def get_overall_actitivity_info():
     """Return an activity summation structure over all time.
-    
+
     """
     activity_cnts = {'weekday_cnt': 0,
                      'weekend_cnt': 0}
@@ -259,7 +259,7 @@ def get_overall_actitivity_info():
                 current_day = day_of_week
                 current_week = week
                 activity_cnts['weekend_cnt'] += 1
-      
+
     for activity in activities.keys():
         activities[activity]['percentage_totals'] = activities[activity]['total_time']*100.0/total
     activity_info = {'activities': activities,
@@ -292,32 +292,32 @@ def daily_statistics():
             daily_statistics[day_of_week][activity]['total_time'] += time_delta
             daily_statistics[day_of_week][activity]['cnt'] += 1
     return daily_statistics
-    
+
 
 def show_percentage_pie_plot():
     # Get data
     activity_info = get_overall_actitivity_info()
     activities = activity_info['activities']
-    
+
     # make a square figure and axes
     figure(1, figsize=(12,12))
     ax = axes([0.1, 0.1, 0.8, 0.8])
 
-    
+
     # The slices will be ordered and plotted counter-clockwise.
     key_list = [k for k in activities.keys() if activities[k]['percentage_totals'] > PERCENTAGE_CUTOFF]
     labels = key_list
     fracs = [activities[k]['percentage_totals'] for k in key_list]
     explode = [0.05 for k in key_list]
-    
+
     pie(fracs, explode=explode, labels=labels, autopct='%1.1f%%', shadow=True, startangle=90)
                     # The default startangle is 0, which would start
                     # the Frogs slice on the x-axis.  With startangle=90,
                     # everything is rotated counter-clockwise by 90 degrees,
                     # so the plotting starts on the positive y-axis.
-    
+
     title('Acitiviy Log', bbox={'facecolor':'0.8', 'pad':5})
-    
+
     show()
 
 
@@ -364,14 +364,14 @@ def show_wow_activity_plot(activity='Coding', weeks=4):
     grid(True)
     rcParams['figure.figsize'] = 20, 10  # Make width=20 inches, height= 10 inches
     show()
-        
+
 
 def plot_day_activity_percentages():
     # Get the list of activities which consume more than the cutoff percentage
     activity_info = get_overall_actitivity_info()
     activities = activity_info['activities']
     activity_list = [k for k in activities.keys() if activities[k]['percentage_totals'] > PERCENTAGE_CUTOFF]
- 
+
     # Initialize our plot data structure
     daily_stats = daily_statistics()
     plot_data = {}
@@ -390,7 +390,7 @@ def get_activity_statistics():
             return 0
         else:
             return int(sum(timing_list) / cnt / 60.0)
-   
+
     def medium_mins(timing_list):
         cnt = len(timing_list)
         if cnt == 0:
@@ -413,7 +413,7 @@ def get_activity_statistics():
                                            activities[activity]['weekday_count'],
                                            average_mins(activities[activity]['weekday_timings']),
                                            medium_mins(activities[activity]['weekday_timings'])))
-     
+
         print('---------+-----+------+--------')
         total_work_time += sum(activities[activity]['weekday_timings'])
     print('Total days: {0}'.format(activity_counts['weekday_cnt']))
@@ -440,7 +440,7 @@ def get_daily_statistics():
     activities = set([])
     for day in NUM_TO_DAY_MAP.keys():
         activities = activities.union(daily_stats[day].keys())
-    activities = activities.difference(set(['day_cnts', 'total_time', 'context_switches'])) 
+    activities = activities.difference(set(['day_cnts', 'total_time', 'context_switches']))
     activities = sorted(list(activities))
     print('Day | Activity | Percenatage')
     sep = ('----+----------+------------')
