@@ -359,10 +359,11 @@ def show_wow_activity_plot(activity='Coding', weeks=4):
     xlabel('Week')
     ylabel('Percentage')
     title('Week over Week {0} Activity Change (Capped at 1000%)'.format(activity))
-    plot(week_axis, wow_cnt_change)
-    plot(week_axis, wow_time_change)
+    plot(week_axis, wow_cnt_change, label='Activity Cnts')
+    plot(week_axis, wow_time_change, label='Activity Time')
     grid(True)
     rcParams['figure.figsize'] = 20, 10  # Make width=20 inches, height= 10 inches
+    legend()
     show()
 
 
